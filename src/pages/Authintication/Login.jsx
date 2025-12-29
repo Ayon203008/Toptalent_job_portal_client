@@ -2,9 +2,14 @@ import React, { use } from "react";
 import RegisterLottie from "../../assets/Lotties/waiting register.json";
 import Lottie from "lottie-react";
 import { AuthContext } from "../../Context/AuthContext";
+import { useLocation, useNavigate } from "react-router";
 
 const Login = () => {
   const {SignInUser}=use(AuthContext)
+  // ! must use this come from the private route
+  const location = useLocation()
+  const navigate = useNavigate()
+  const from = location.state || '/'
   
   // ! function for login
 
@@ -18,6 +23,7 @@ const Login = () => {
       SignInUser(email,password)
       .then(result=>{
         console.log(result)
+        navigate(from) // ! must use this navigate 
       })
       .catch(error=>{
         console.log(error)
