@@ -1,20 +1,54 @@
 import React, { use } from "react";
 import { AuthContext } from "../../Context/AuthContext";
+import axios from "axios";
+import Swal from "sweetalert2";
 
 const AddJob = () => {
+  const { user } = use(AuthContext);
 
-    const {user}= use(AuthContext)
+  // * go to hr email input filed and type defaultValue ={user.email}
 
-    // ! go to hr email input filed and type defaultValue ={user.email}
+  const handleAddJob = (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const formData = new FormData(form);
+    const data = Object.fromEntries(formData.entries());
+    console.log(data);
+    // * process salary range data
+    const { min, max, currency, ...newJob } = data;
+    newJob.salaryRange = { min, max, currency };
+    console.log(newJob);
+    // * process requirement
+    const requirementsString = newJob.requirements;
+    const requirementsDirty = requirementsString.split(",");
+    const requirementsClean = requirementsDirty.map((req) => req.trim());
+    newJob.requirements = requirementsClean;
 
-    const handleAddJob = (e)=>{
-        e.preventDefault()
-        const form =e.target
-        const formData= new FormData(form)
-        const data = Object.fromEntries(formData.entries())
-        console.log(data)
-   
-    }
+    // * process responsibilities
+
+    newJob.responsibilities = newJob.responsibilities
+      .split(",")
+      .map((res) => res.trim());
+    newJob.status = "active";
+
+    // * post the data to the backend server
+axios.post("http://localhost:3000/jobs", newJob)
+      .then((res) => {
+        console.log(res);
+        if (res.data.insertedId) {
+          Swal.fire({
+            position: "top-end",
+            icon: "success",
+            title: "Your work has been saved",
+            showConfirmButton: false,
+            timer: 1500,
+          });
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
 
   return (
     <form onSubmit={handleAddJob}>
@@ -63,29 +97,27 @@ const AddJob = () => {
             type="radio"
             name="jobType"
             aria-label="All"
-           
           />
           <input
             className="btn"
             type="radio"
             name="On-Site"
             aria-label="On-Site"
-             value={'On-Site'}
+            value={"On-Site"}
           />
           <input
             className="btn"
             type="radio"
             name="Remote"
             aria-label="Remote"
-            value={'Remote'}
-            
+            value={"Remote"}
           />
           <input
             className="btn"
             type="radio"
             name="Hybrid"
             aria-label="Hybrid"
-            value={'Hybrid'}
+            value={"Hybrid"}
           />
         </div>
       </fieldset>
@@ -102,7 +134,7 @@ const AddJob = () => {
       </fieldset>
       <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
         <legend className="fieldset-legend">Application Deadline</legend>
-        <input type="date" className="input" />
+        <input type="date" name="deadline" className="input" />
       </fieldset>
 
       <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
@@ -142,8 +174,16 @@ const AddJob = () => {
         <legend className="fieldset-legend">Application Requirements</legend>
         <textarea
           className="textarea"
-          name="description"
-          placeholder="Requirments('Separeted by comma')"
+          name="requirements"
+          placeholder="Requirements"
+        ></textarea>
+      </fieldset>
+      <fieldset className="fieldset bg-base-200 border-base-300 rounded-box w-xs border p-4">
+        <legend className="fieldset-legend">Application Reponsibilities</legend>
+        <textarea
+          className="textarea"
+          name="responsibilities"
+          placeholder="Responsibilities"
         ></textarea>
       </fieldset>
 

@@ -5,7 +5,7 @@ import { AuthContext } from "../../Context/AuthContext";
 const Navbar = () => {
   const { user, signOutUser } = use(AuthContext);
 
-  // ! function for logout a user
+  // * function for logout a user
 
   const handleSignout = () => {
     signOutUser()
@@ -32,7 +32,8 @@ const Navbar = () => {
 
       {
         user && <>
-         <NavLink to={"/addJob"}>Add Job</NavLink>
+         <NavLink className={"mx-2"} to={"/addJob"}>Add Job</NavLink>
+         <NavLink className={"mx-2"} to={"/myPostedJobs"}>My Posted Jobs</NavLink>
         </>
       }
     </>
@@ -96,3 +97,6 @@ const Navbar = () => {
 };
 
 export default Navbar;
+
+
+// * my name is ad
