@@ -5,7 +5,7 @@ import { use } from "react";
 import { AuthContext } from "../../Context/AuthContext";
 
 const myApplicationsPromise = (email) => {
-  return fetch(`http://localhost:3000/applications?email=${email}`).then(
+  return fetch(`http://localhost:3000/applications?email=${email}`,{credentials:'include'}).then(
     (res) => res.json()
   );
 };
